@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: ai-sales-crm-api
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r backend/requirements.txt && cd backend && alembic upgrade head
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GMAIL_API_KEY
+        sync: false
+      - key: GOOGLE_CALENDAR_API_KEY
+        sync: false
+      - key: BLAND_AI_API_KEY
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+    healthCheckPath: /api/health
+
+  - type: web
+    name: ai-sales-crm-frontend
+    runtime: static
+    buildCommand: cd frontend && npm ci && npm run build
+    staticPublishPath: frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+databases:
+  - name: ai-sales-crm-db
+    plan: starter
+    databaseName: aisales
+    user: aisales
