@@ -46,3 +46,10 @@ databases:
     plan: starter
     databaseName: aisales
     user: aisales
+
+services:
+  - type: web
+    name: ai-sales-crm
+    env: docker
+    plan: free
+    autoDeploy: true
